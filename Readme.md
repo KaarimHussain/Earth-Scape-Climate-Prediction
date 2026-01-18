@@ -1,4 +1,7 @@
-# EarthScape Climate Analytics System
+# EarthScape Climate Analytics System - AKA Aeris
+## What is Aeris
+
+Aeris comes from atmospheric science roots, representing air systems and dynamic environmental patterns. The name reflects how our platform analyzes climate data to understand and predict atmospheric behavior.
 
 ## Introduction
 
