@@ -19,7 +19,7 @@ export default function Header({ title, subtitle, bigTitle, bigTitleClass, title
                     whileInView={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                     viewport={{ once: true }}
                     transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                    className={`${bigTitleClass} font-ahsing uppercase absolute top-0 left-1/2 transform -translate-x-1/2 select-none text-primary/25 text-7xl sm:text-9xl md:text-[15rem] leading-none md:leading-[0] whitespace-nowrap`}
+                    className={`${bigTitleClass} font-ahsing uppercase absolute top-0 left-1/2 transform -translate-x-1/2 select-none text-primary/25 text-7xl sm:text-9xl md:text-[10rem] leading-none md:leading-0 whitespace-nowrap`}
                 >
                     {bigTitle}
                 </motion.h1>

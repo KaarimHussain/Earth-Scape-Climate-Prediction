@@ -71,7 +71,7 @@ export default function Features() {
                                 key={index}
                                 initial={false}
                                 onClick={() => setActiveIndex(isOpen ? null : index)}
-                                className={`group relative border border-white/5 rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 ${isOpen ? 'bg-white/[0.03]' : 'bg-transparent hover:bg-white/[0.01]'}`}
+                                className={`group relative border border-white/5 rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 ${isOpen ? 'bg-white/3' : 'bg-transparent hover:bg-white/1'}`}
                             >
                                 {/* Header Row */}
                                 <div className="p-6 md:p-10 flex items-center justify-between relative z-10 w-full">
@@ -111,7 +111,7 @@ export default function Features() {
                                             transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
                                         >
                                             <div className="px-6 pb-10 md:px-10 md:pb-14 pt-2">
-                                                <div className="h-[1px] w-full bg-white/5 mb-8" />
+                                                <div className="h-px w-full bg-white/5 mb-8" />
 
                                                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
                                                     {/* Text Content */}
