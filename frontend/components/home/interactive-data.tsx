@@ -1,8 +1,8 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Header from "../header";
-import { motion, AnimatePresence } from "framer-motion";
-import { Activity, Wind, Thermometer, Cpu, Network, HardDrive, Wifi } from "lucide-react";
+import { motion } from "framer-motion";
+import { Cpu, HardDrive, Wifi } from "lucide-react";
 
 export default function InteractiveData() {
     const [activeRegion, setActiveRegion] = useState(0);
@@ -24,11 +24,6 @@ export default function InteractiveData() {
 
     return (
         <section className="min-h-screen w-full bg-secondary py-20 relative overflow-hidden flex flex-col items-center">
-            {/* Background Matrix */}
-            <div className="absolute inset-0 pointer-events-none opacity-20">
-                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
-                <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
-            </div>
 
             <Header
                 bigTitle="Monitor"

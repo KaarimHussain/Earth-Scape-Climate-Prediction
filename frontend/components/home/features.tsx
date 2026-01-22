@@ -49,12 +49,6 @@ export default function Features() {
 
     return (
         <section className="min-h-screen w-full bg-secondary py-20 relative overflow-hidden">
-            {/* Ambient Background */}
-            <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-[10%] right-[10%] w-[500px] h-[500px] bg-primary/5 blur-[100px] rounded-full" />
-                <div className="absolute bottom-[10%] left-[10%] w-[500px] h-[500px] bg-blue-500/5 blur-[100px] rounded-full" />
-            </div>
-
             <Header
                 bigTitle="Capabilities"
                 title="Technical Specifications"

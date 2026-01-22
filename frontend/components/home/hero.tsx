@@ -6,13 +6,6 @@ export default function Hero() {
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background text-foreground selection:bg-primary/30">
             {/* Background Elements */}
             <div className="absolute inset-0 z-0">
-                {/* Noise Texture */}
-                <div className="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay"
-                    style={{
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-                    }}
-                />
-
                 {/* Subtle Grid */}
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-size-[24px_24px] pointer-events-none" />
 
@@ -28,22 +21,6 @@ export default function Hero() {
             {/* Main Content */}
             <div className="container relative mx-auto px-4 z-20 text-center">
                 <div className="max-w-4xl mx-auto space-y-8">
-
-                    {/* Badge/Pill */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                        className="flex justify-center"
-                    >
-                        <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs md:text-sm font-medium tracking-wide">
-                            <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-                            </span>
-                            Next-Gen Climate Intelligence
-                        </span>
-                    </motion.div>
 
                     {/* Headings */}
                     <motion.div

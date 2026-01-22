@@ -35,12 +35,6 @@ export default function OurApproach() {
 
     return (
         <section className="min-h-screen w-full bg-secondary py-24 relative overflow-hidden">
-            {/* Background Ambience */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                <div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] bg-primary/5 blur-[120px] rounded-full" />
-                <div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] bg-blue-500/5 blur-[120px] rounded-full" />
-            </div>
-
             <Header
                 bigTitle="Pipeline"
                 title="System Architecture"
@@ -60,12 +54,7 @@ export default function OurApproach() {
                             transition={{ delay: index * 0.2, duration: 0.6 }}
                             className="group relative"
                         >
-                            {/* Connector Line (Desktop) */}
-                            {index !== steps.length - 1 && (
-                                <div className="hidden lg:block absolute top-8 left-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent z-0" />
-                            )}
-
-                            <div className="relative z-10 flex flex-col gap-6 p-8 rounded-3xl bg-white/[0.03] backdrop-blur-md border border-white/5 hover:bg-white/[0.05] hover:border-white/10 transition-all duration-500 hover:-translate-y-2 group-hover:shadow-[0_10px_40px_-10px_rgba(38,158,95,0.1)]">
+                            <div className="relative z-10 flex flex-col gap-6 p-8 rounded-3xl bg-white/3 backdrop-blur-md border border-white/5 hover:bg-white/5 hover:border-white/10 transition-all duration-500 hover:-translate-y-2 group-hover:shadow-[0_10px_40px_-10px_rgba(38,158,95,0.1)] h-full">
 
                                 <div className="flex justify-between items-start">
                                     <span className="font-ahsing text-5xl text-white/20 group-hover:text-primary transition-colors duration-500">

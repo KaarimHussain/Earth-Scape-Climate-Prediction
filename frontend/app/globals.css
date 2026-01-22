@@ -203,6 +203,9 @@ body {
   .animate-scroll-down {
     animation: scroll-down 2s cubic-bezier(0.77, 0, 0.175, 1) infinite;
   }
+  .animate-pulse-slow {
+    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
 }
 
 @keyframes float {
