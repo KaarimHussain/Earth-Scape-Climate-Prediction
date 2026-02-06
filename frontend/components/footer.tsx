@@ -48,7 +48,7 @@ export default function Footer() {
                     <div className="md:col-span-4 lg:col-span-2">
                         <h4 className="text-white text-sm font-bold uppercase tracking-widest mb-6">Platform</h4>
                         <ul className="space-y-4">
-                            {['Solutions', 'Technology', 'Data Sources', 'API Access', 'Pricing'].map((item) => (
+                            {['Prediction', 'Analysis', 'Alerts', 'Feedback'].map((item) => (
                                 <li key={item}>
                                     <Link href="#" className="text-white/60 hover:text-primary transition-colors flex items-center gap-1 group">
                                         {item}

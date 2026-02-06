@@ -4,8 +4,34 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, ArrowRight, Lock, Mail, User } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { register } from "@/lib/api";
 
 export default function RegisterPage() {
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
+
+    const handleRegister = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setError("");
+
+        try {
+            await register(username, email, password);
+            router.push("/auth/login"); // Redirect to login on success
+        } catch (err: any) {
+            console.error(err);
+            setError(err.response?.data?.detail || "Registration failed");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="min-h-screen w-full flex bg-background text-foreground overflow-hidden">
             {/* Left Side - Visual & Branding */}
@@ -71,18 +97,21 @@ export default function RegisterPage() {
                         </p>
                     </div>
 
-                    <form className="space-y-6">
+                    <form onSubmit={handleRegister} className="space-y-6">
                         <div className="space-y-2">
-                            <label htmlFor="name" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                Full Name
+                            <label htmlFor="username" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                Username
                             </label>
                             <div className="relative">
                                 <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                                 <Input
-                                    id="name"
-                                    placeholder="John Doe"
+                                    id="username"
+                                    placeholder="Choose a username"
                                     type="text"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
                                     className="pl-10 h-12 bg-secondary/10 border-input focus:border-primary/50 transition-colors"
+                                    required
                                 />
                             </div>
                         </div>
@@ -97,7 +126,10 @@ export default function RegisterPage() {
                                     id="email"
                                     placeholder="name@example.com"
                                     type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     className="pl-10 h-12 bg-secondary/10 border-input focus:border-primary/50 transition-colors"
+                                    required
                                 />
                             </div>
                         </div>
@@ -112,13 +144,18 @@ export default function RegisterPage() {
                                     id="password"
                                     placeholder="Create a password"
                                     type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                     className="pl-10 h-12 bg-secondary/10 border-input focus:border-primary/50 transition-colors"
+                                    required
                                 />
                             </div>
                         </div>
 
-                        <Button className="w-full h-12 text-base font-medium shadow-lg hover:shadow-primary/25 transition-all duration-300">
-                            Create Account <ArrowRight className="ml-2 w-4 h-4" />
+                        {error && <p className="text-red-500 text-sm">{error}</p>}
+
+                        <Button disabled={loading} className="w-full h-12 text-base font-medium shadow-lg hover:shadow-primary/25 transition-all duration-300">
+                            {loading ? "Creating Account..." : "Create Account"} <ArrowRight className="ml-2 w-4 h-4" />
                         </Button>
                     </form>
 

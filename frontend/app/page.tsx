@@ -7,6 +7,7 @@ import UseCases from "@/components/home/use-cases";
 import Insights from "@/components/home/insights";
 import Footer from "@/components/footer";
 import Navbar from "@/components/navbar";
+import ClimateFeed from "@/components/climate-feed";
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
         <Impact />
         <UseCases />
         <Insights />
+        <ClimateFeed />
         <Footer />
       </div>
     </>

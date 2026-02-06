@@ -3,9 +3,35 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, ArrowRight, Lock, Mail } from "lucide-react";
+import { ArrowLeft, ArrowRight, Lock, Mail, User } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { login } from "@/lib/api";
 
 export default function LoginPage() {
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
+
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setError("");
+
+        try {
+            const response = await login(username, password);
+            localStorage.setItem("token", response.data.access_token);
+            router.push("/"); // Redirect to home/dashboard
+        } catch (err: any) {
+            console.error(err);
+            setError(err.response?.data?.detail || "Login failed");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="min-h-screen w-full flex bg-background text-foreground overflow-hidden">
             {/* Left Side - Visual & Branding */}
@@ -70,18 +96,21 @@ export default function LoginPage() {
                         </p>
                     </div>
 
-                    <form className="space-y-6">
+                    <form onSubmit={handleLogin} className="space-y-6">
                         <div className="space-y-2">
-                            <label htmlFor="email" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                Email
+                            <label htmlFor="username" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                Username
                             </label>
                             <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                                 <Input
-                                    id="email"
-                                    placeholder="name@example.com"
-                                    type="email"
+                                    id="username"
+                                    placeholder="Enter username"
+                                    type="text"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
                                     className="pl-10 h-12 bg-secondary/10 border-input focus:border-primary/50 transition-colors"
+                                    required
                                 />
                             </div>
                         </div>
@@ -104,13 +133,18 @@ export default function LoginPage() {
                                     id="password"
                                     placeholder="Enter your password"
                                     type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                     className="pl-10 h-12 bg-secondary/10 border-input focus:border-primary/50 transition-colors"
+                                    required
                                 />
                             </div>
                         </div>
 
-                        <Button className="w-full h-12 text-base font-medium shadow-lg hover:shadow-primary/25 transition-all duration-300">
-                            Sign In <ArrowRight className="ml-2 w-4 h-4" />
+                        {error && <p className="text-red-500 text-sm">{error}</p>}
+
+                        <Button disabled={loading} className="w-full h-12 text-base font-medium shadow-lg hover:shadow-primary/25 transition-all duration-300">
+                            {loading ? "Signing In..." : "Sign In"} <ArrowRight className="ml-2 w-4 h-4" />
                         </Button>
                     </form>
 

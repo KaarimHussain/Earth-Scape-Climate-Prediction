@@ -1,0 +1,14 @@
+fastapi>=0.109.0
+uvicorn>=0.27.0
+motor
+pydantic>=2.6.0
+python-dotenv
+python-multipart
+pandas
+scikit-learn
+matplotlib
+seaborn
+requests
+passlib[bcrypt]
+python-jose[cryptography]
+python-multipart
