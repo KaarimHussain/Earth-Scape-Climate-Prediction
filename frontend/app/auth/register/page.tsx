@@ -23,10 +23,12 @@ export default function RegisterPage() {
 
         try {
             await register(username, email, password);
-            router.push("/auth/login"); // Redirect to login on success
+            // Optionally auto-login or just redirect
+            router.push("/auth/login");
         } catch (err: any) {
             console.error(err);
-            setError(err.response?.data?.detail || "Registration failed");
+            const specificError = err.response?.data?.message || "Registration failed. Please try again.";
+            setError(specificError);
         } finally {
             setLoading(false);
         }

@@ -21,12 +21,20 @@ export default function LoginPage() {
         setError("");
 
         try {
+            // Using 'username' state as the identifier (can be email too)
             const response = await login(username, password);
-            localStorage.setItem("token", response.data.access_token);
+            // My API returns { token, user, message }
+            const { token, user } = response.data;
+
+            localStorage.setItem("token", token);
+            localStorage.setItem("user", JSON.stringify(user));
+
             router.push("/"); // Redirect to home/dashboard
         } catch (err: any) {
-            console.error(err);
-            setError(err.response?.data?.detail || "Login failed");
+            console.error("Login Error:", err);
+            // Check for response.data.message from my API
+            const specificError = err.response?.data?.message || "Login failed. Please check your credentials.";
+            setError(specificError);
         } finally {
             setLoading(false);
         }
