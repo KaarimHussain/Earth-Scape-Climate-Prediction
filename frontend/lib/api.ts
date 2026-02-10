@@ -67,7 +67,9 @@ export const register = async (username: string, email: string, password: string
 
 
 export const submitFeedback = async (name: string, email: string, message: string, rating: number) => {
-    return api.post("/feedback", { name, email, message, rating });
+    return api.post("/api/feedback", { name, email, message, rating }, {
+        baseURL: process.env.NEXT_PUBLIC_APP_URL || "",
+    });
 };
 
 export default api;

@@ -301,7 +301,7 @@ export default function PredictPage() {
                                                     {Math.round(result.current_temp)}°
                                                 </h2>
                                                 <p className="text-2xl text-neutral-300 font-light mt-2 flex items-center gap-3">
-                                                    <span className="capitalize">{result.weather_data.weather[0].description}</span>
+                                                    <span className="capitalize">{result.weather_data?.weather?.[0]?.description || "Unknown"}</span>
                                                     <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
                                                     <span>{city}</span>
                                                 </p>
@@ -311,17 +311,17 @@ export default function PredictPage() {
                                                 <div className="flex items-center gap-4 text-white/60 font-light">
                                                     <span>Humidity</span>
                                                     <div className="h-px w-10 bg-white/10" />
-                                                    <span className="text-white font-medium">{result.weather_data.main.humidity}%</span>
+                                                    <span className="text-white font-medium">{result.weather_data?.main?.humidity}%</span>
                                                 </div>
                                                 <div className="flex items-center gap-4 text-white/60 font-light">
                                                     <span>Wind Velocity</span>
                                                     <div className="h-px w-10 bg-white/10" />
-                                                    <span className="text-white font-medium">{result.weather_data.wind.speed} m/s</span>
+                                                    <span className="text-white font-medium">{result.weather_data?.wind?.speed} m/s</span>
                                                 </div>
                                                 <div className="flex items-center gap-4 text-white/60 font-light">
                                                     <span>Real Feel</span>
                                                     <div className="h-px w-10 bg-white/10" />
-                                                    <span className="text-white font-medium">{Math.round(result.weather_data.main.feels_like)}°</span>
+                                                    <span className="text-white font-medium">{result.weather_data?.main?.feels_like ? Math.round(result.weather_data.main.feels_like) : "--"}°</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -345,7 +345,9 @@ export default function PredictPage() {
                                             </h3>
                                             <VoiceAssistant text={result.prediction} />
                                             <div className="mt-6">
-                                                <EcoTips weatherMain={result.weather_data.weather[0].main} temp={result.current_temp} />
+                                                {result.weather_data?.weather?.[0] && (
+                                                    <EcoTips weatherMain={result.weather_data.weather[0].main} temp={result.current_temp} />
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -365,7 +367,6 @@ export default function PredictPage() {
                             </motion.div>
                         )}
                     </AnimatePresence>
-
                 </div>
             </div>
             <Footer />

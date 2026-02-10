@@ -3,17 +3,21 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, ArrowRight, Lock, Mail, User } from "lucide-react";
+import { ArrowLeft, ArrowRight, Lock, Mail, User, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { login } from "@/lib/api";
+import { login as loginApi } from "@/lib/api";
+import { useAuth } from "@/context/auth-context";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function LoginPage() {
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const { login } = useAuth();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -21,18 +25,15 @@ export default function LoginPage() {
         setError("");
 
         try {
-            // Using 'username' state as the identifier (can be email too)
-            const response = await login(username, password);
-            // My API returns { token, user, message }
+            const response = await loginApi(email, password);
             const { token, user } = response.data;
 
-            localStorage.setItem("token", token);
-            localStorage.setItem("user", JSON.stringify(user));
+            // Update Context
+            login(token, user);
 
-            router.push("/"); // Redirect to home/dashboard
+            router.push("/");
         } catch (err: any) {
             console.error("Login Error:", err);
-            // Check for response.data.message from my API
             const specificError = err.response?.data?.message || "Login failed. Please check your credentials.";
             setError(specificError);
         } finally {
@@ -106,17 +107,17 @@ export default function LoginPage() {
 
                     <form onSubmit={handleLogin} className="space-y-6">
                         <div className="space-y-2">
-                            <label htmlFor="username" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                Username
+                            <label htmlFor="email" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                Email
                             </label>
                             <div className="relative">
-                                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                                 <Input
-                                    id="username"
-                                    placeholder="Enter username"
-                                    type="text"
-                                    value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
+                                    id="email"
+                                    placeholder="Enter your email"
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     className="pl-10 h-12 bg-secondary/10 border-input focus:border-primary/50 transition-colors"
                                     required
                                 />
@@ -140,16 +141,33 @@ export default function LoginPage() {
                                 <Input
                                     id="password"
                                     placeholder="Enter your password"
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="pl-10 h-12 bg-secondary/10 border-input focus:border-primary/50 transition-colors"
+                                    className="pl-10 pr-10 h-12 bg-secondary/10 border-input focus:border-primary/50 transition-colors"
                                     required
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                                >
+                                    {showPassword ? (
+                                        <EyeOff className="h-5 w-5" />
+                                    ) : (
+                                        <Eye className="h-5 w-5" />
+                                    )}
+                                </button>
                             </div>
                         </div>
 
-                        {error && <p className="text-red-500 text-sm">{error}</p>}
+                        {error && (
+                            <Alert variant="destructive" className="bg-red-500/10 border-red-500/50 text-red-500">
+                                <AlertCircle className="h-4 w-4" />
+                                <AlertTitle>Error</AlertTitle>
+                                <AlertDescription>{error}</AlertDescription>
+                            </Alert>
+                        )}
 
                         <Button disabled={loading} className="w-full h-12 text-base font-medium shadow-lg hover:shadow-primary/25 transition-all duration-300">
                             {loading ? "Signing In..." : "Sign In"} <ArrowRight className="ml-2 w-4 h-4" />

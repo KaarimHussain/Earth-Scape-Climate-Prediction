@@ -46,13 +46,28 @@ class MLService:
         if not city or not country:
             return {"error": "City and Country are required"}
 
-        complete_url = f"{BASE_URL}?q={city},{country}&appid={API_KEY}&units=metric"
+        # Use params for safe URL encoding
+        params = {
+            "q": f"{city},{country}",
+            "appid": API_KEY,
+            "units": "metric"
+        }
+        
+        print(f"DEBUG: Fetching weather for {city}, {country}")
+        
         try:
-            response = requests.get(complete_url)
+            response = requests.get(BASE_URL, params=params)
+            print(f"DEBUG: Weather API Status: {response.status_code}")
+            
             if response.status_code == 200:
                 weather_data = response.json()
-                current_temp = weather_data['main']['temp']
-                
+                # print(f"DEBUG: Weather Data: {weather_data}") # Uncomment for verbose logs
+
+                current_temp = weather_data.get('main', {}).get('temp')
+                if current_temp is None:
+                     print("DEBUG: 'temp' missing in response")
+                     return {"error": "Temperature data missing from provider"}
+
                 # Logic from legacy code
                 if current_temp > 30:
                     alert_color = "danger"
@@ -65,17 +80,28 @@ class MLService:
                 prediction_text = f"Current temperature for {city}, {country}: {current_temp:.2f}°C. The temperature is expected to {trend}."
 
                 # Fetch Forecast Data
-                forecast_url = f"https://api.openweathermap.org/data/2.5/forecast?q={city},{country}&appid={API_KEY}&units=metric"
-                forecast_response = requests.get(forecast_url)
+                forecast_url = "https://api.openweathermap.org/data/2.5/forecast"
+                forecast_params = {
+                    "q": f"{city},{country}",
+                    "appid": API_KEY,
+                    "units": "metric"
+                }
+                
+                print("DEBUG: Fetching forecast...")
+                forecast_response = requests.get(forecast_url, params=forecast_params)
                 hourly_forecast = []
+                
                 if forecast_response.status_code == 200:
                     forecast_data = forecast_response.json()
-                    # Get next 4 intervals (approx 12 hours)
-                    for item in forecast_data['list'][:5]:
-                        hourly_forecast.append({
-                            "time": pd.to_datetime(item['dt'], unit='s').strftime('%H:%M'),
-                            "temp": item['main']['temp']
-                        })
+                    # Get next 5 intervals
+                    if 'list' in forecast_data:
+                        for item in forecast_data['list'][:5]:
+                            hourly_forecast.append({
+                                "time": pd.to_datetime(item['dt'], unit='s').strftime('%H:%M'),
+                                "temp": item['main']['temp']
+                            })
+                else:
+                    print(f"DEBUG: Forecast failed: {forecast_response.status_code}")
 
                 return {
                     "current_temp": current_temp,
@@ -85,8 +111,12 @@ class MLService:
                     "hourly_forecast": hourly_forecast
                 }
             else:
-                return {"error": f"Failed to fetch weather data: {response.status_code}"}
+                error_msg = response.json().get('message', 'Unknown error')
+                print(f"DEBUG: API Error: {error_msg}")
+                return {"error": f"Weather API Error: {error_msg}"}
+                
         except Exception as e:
+            print(f"DEBUG: Exception: {str(e)}")
             return {"error": str(e)}
 
     def train_model(self):

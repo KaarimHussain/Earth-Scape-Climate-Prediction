@@ -1,15 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Logo from "./logo";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import { useAuth } from "@/context/auth-context";
+import { LogOut, User } from "lucide-react";
+import { LogoutModal } from "./logout-modal";
 
 export default function Navbar() {
     const pathname = usePathname();
     const [isScrolled, setIsScrolled] = useState(false);
+    const { user, logout } = useAuth();
+    const router = useRouter();
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
 
     useEffect(() => {
         if (pathname === "/") {
@@ -28,6 +34,12 @@ export default function Navbar() {
         }
     }, [pathname]);
 
+    const handleLogoutConfirm = () => {
+        setShowLogoutModal(false);
+        logout();
+        router.push("/");
+    };
+
     return (
         <>
             <motion.div
@@ -43,35 +55,78 @@ export default function Navbar() {
                     />
                 </Link>
                 <div className="hidden md:flex items-center gap-6">
-                    <Link href="/predict" className={`text-sm font-medium ${isScrolled ? "text-white" : "text-black"} hover:opacity-80 transition-opacity`}>
-                        Prediction
-                    </Link>
-                    <Link href="/analysis" className={`text-sm font-medium ${isScrolled ? "text-white" : "text-black"} hover:opacity-80 transition-opacity`}>
-                        Analysis
-                    </Link>
-                    <Link href="/feedback" className={`text-sm font-medium ${isScrolled ? "text-white" : "text-black"} hover:opacity-80 transition-opacity`}>
-                        Feedback
-                    </Link>
-                    <Link href="/notifications" className={`text-sm font-medium ${isScrolled ? "text-white" : "text-black"} hover:opacity-80 transition-opacity`}>
-                        Alerts
-                    </Link>
+                    {user ? (
+                        // Logged In Links
+                        <>
+                            <Link href="/predict" className={`text-sm font-medium ${isScrolled ? "text-white" : "text-black"} hover:opacity-80 transition-opacity`}>
+                                Prediction
+                            </Link>
+                            <Link href="/analysis" className={`text-sm font-medium ${isScrolled ? "text-white" : "text-black"} hover:opacity-80 transition-opacity`}>
+                                Analysis
+                            </Link>
+                            <Link href="/feedback" className={`text-sm font-medium ${isScrolled ? "text-white" : "text-black"} hover:opacity-80 transition-opacity`}>
+                                Feedback
+                            </Link>
+                            <Link href="/notifications" className={`text-sm font-medium ${isScrolled ? "text-white" : "text-black"} hover:opacity-80 transition-opacity`}>
+                                Alerts
+                            </Link>
+                        </>
+                    ) : (
+                        // Guest Links
+                        <>
+                            <Link href="/about" className={`text-sm font-medium ${isScrolled ? "text-white" : "text-black"} hover:opacity-80 transition-opacity`}>
+                                About
+                            </Link>
+                            <Link href="/blogs" className={`text-sm font-medium ${isScrolled ? "text-white" : "text-black"} hover:opacity-80 transition-opacity`}>
+                                Blogs
+                            </Link>
+                            <Link href="/feedback" className={`text-sm font-medium ${isScrolled ? "text-white" : "text-black"} hover:opacity-80 transition-opacity`}>
+                                Feedback
+                            </Link>
+                        </>
+                    )}
                 </div>
                 <div className="flex items-center gap-3">
-                    <Link href={"/auth/login"}>
-                        <Button variant={"outline"}
-                            className="rounded-full sm:text-md sm:px-7 border-none shadow-none">
-                            Login
-                        </Button>
-                    </Link>
-                    <Link href={"/auth/register"}>
-                        <Button variant={"secondary"}
-                            className="rounded-full sm:text-md sm:px-10">
-                            Register
-                        </Button>
-                    </Link>
+                    {user ? (
+                        <>
+                            <Link href="/profile">
+                                <Button variant="ghost" size="icon" className={`rounded-full hover:bg-white/10 ${isScrolled ? "text-white" : "text-black"}`}>
+                                    <User className="w-5 h-5" />
+                                </Button>
+                            </Link>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className={`rounded-full hover:bg-red-500/10 hover:text-red-500 ${isScrolled ? "text-white" : "text-black"}`}
+                                onClick={() => setShowLogoutModal(true)}
+                            >
+                                <LogOut className="w-5 h-5" />
+                            </Button>
+                        </>
+                    ) : (
+                        <>
+                            <Link href={"/auth/login"}>
+                                <Button variant={"outline"}
+                                    className="rounded-full sm:text-md sm:px-7 border-none shadow-none text-black">
+                                    Login
+                                </Button>
+                            </Link>
+                            <Link href={"/auth/register"}>
+                                <Button variant={"secondary"}
+                                    className="rounded-full sm:text-md sm:px-10">
+                                    Register
+                                </Button>
+                            </Link>
+                        </>
+                    )}
                 </div>
             </motion.div>
 
+            <LogoutModal
+                isOpen={showLogoutModal}
+                onClose={() => setShowLogoutModal(false)}
+                onConfirm={handleLogoutConfirm}
+            />
         </>
     )
 }

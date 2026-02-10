@@ -56,8 +56,8 @@ class AnalyticsService:
         img.seek(0)
         return base64.b64encode(img.getvalue()).decode()
 
-    def generate_correlation_matrix(self, city: str = "Karachi", country: str = None):
-        # Default to Karachi if nothing specified to ensure meaningful correlation
+    def generate_correlation_matrix(self, city: str = None, country: str = None):
+        # Filter data based on provided city/country
         df = self._filter_data(city=city, country=country)
         
         if df is None or df.empty:

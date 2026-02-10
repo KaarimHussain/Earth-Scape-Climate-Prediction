@@ -4,7 +4,6 @@ import { useState } from "react";
 import Navbar from "@/components/navbar";
 import { submitFeedback } from "@/lib/api";
 import { motion } from "framer-motion";
-import emailjs from '@emailjs/browser';
 import Footer from "@/components/footer";
 
 export default function FeedbackPage() {
@@ -22,23 +21,8 @@ export default function FeedbackPage() {
         setError("");
 
         try {
-            // Send to Backend
+            // Send to Next.js Backend (which sends email via Nodemailer)
             await submitFeedback(name, email, message, rating);
-
-            // Send Email via EmailJS
-            const templateParams = {
-                from_name: name,
-                from_email: email,
-                message: message,
-                rating: rating
-            };
-
-            await emailjs.send(
-                'service_6eu8sqp',     // Service ID
-                'template_default',    // Placeholder Template ID
-                templateParams,
-                'nqDhG6e-TDJfeJWGE'    // New Public Key
-            );
 
             setSuccess(true);
             setName("");
@@ -47,9 +31,7 @@ export default function FeedbackPage() {
             setRating(5);
         } catch (err: any) {
             console.error("Error submitting feedback:", err);
-            // Even if EmailJS fails, if backend succeeded, we can show success or a warning. 
-            // Here assuming if backend works, we are good.
-            setSuccess(true);
+            setError("Failed to submit feedback. Please try again.");
         } finally {
             setLoading(false);
         }
