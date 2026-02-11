@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import climate, prediction, analytics, auth, feedback, notifications
+from app.routers import climate, prediction, analytics, auth, feedback, notifications, system
 
 from contextlib import asynccontextmanager
 from app.database import connect_to_mongo, close_mongo_connection
@@ -27,6 +27,7 @@ app.include_router(auth.router, tags=["Authentication"], prefix="/auth")
 app.include_router(climate.router, tags=["Climate"], prefix="/climate")
 app.include_router(prediction.router, tags=["Prediction"], prefix="/predict")
 app.include_router(analytics.router, tags=["Analytics"], prefix="/analytics")
+app.include_router(system.router, prefix="/system", tags=["system"])
 app.include_router(feedback.router, tags=["Feedback"], prefix="/feedback")
 app.include_router(notifications.router, tags=["Notifications"], prefix="/notifications")
 

@@ -72,4 +72,15 @@ export const submitFeedback = async (name: string, email: string, message: strin
     });
 };
 
+export const getUserNotifications = async () => {
+    return api.get("/api/notifications", {
+        baseURL: process.env.NEXT_PUBLIC_APP_URL || "",
+    });
+};
+export const markNotificationRead = async (id: string) => {
+    return api.post(`/api/notifications/${id}/read`, {}, {
+        baseURL: process.env.NEXT_PUBLIC_APP_URL || "",
+    });
+};
+
 export default api;

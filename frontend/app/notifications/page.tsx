@@ -2,16 +2,16 @@
 
 import { useState, useEffect } from "react";
 import Navbar from "@/components/navbar";
-import api from "@/lib/api";
+import { getUserNotifications, markNotificationRead } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bell, CheckCircle, AlertTriangle, Info } from "lucide-react";
 import Footer from "@/components/footer";
 
 interface Notification {
-    id: number;
+    id: string;
     title: string;
     message: string;
-    type: "info" | "warning" | "danger";
+    type: "info" | "warning" | "danger" | "success";
     timestamp: string;
     read: boolean;
 }
@@ -26,7 +26,7 @@ export default function NotificationsPage() {
 
     const fetchNotifications = async () => {
         try {
-            const res = await api.get("/notifications");
+            const res = await getUserNotifications();
             setNotifications(res.data);
         } catch (err) {
             console.error("Failed to fetch notifications", err);
@@ -35,9 +35,9 @@ export default function NotificationsPage() {
         }
     };
 
-    const markAsRead = async (id: number) => {
+    const markAsRead = async (id: string) => {
         try {
-            await api.post(`/notifications/${id}/read`);
+            await markNotificationRead(id);
             setNotifications(notifications.map(n => n.id === id ? { ...n, read: true } : n));
         } catch (err) {
             console.error(err);
@@ -48,6 +48,7 @@ export default function NotificationsPage() {
         switch (type) {
             case "danger": return <AlertTriangle className="text-red-500" />;
             case "warning": return <AlertTriangle className="text-yellow-500" />;
+            case "success": return <CheckCircle className="text-emerald-500" />;
             default: return <Info className="text-blue-500" />;
         }
     };
@@ -93,12 +94,14 @@ export default function NotificationsPage() {
                                             }`}
                                     >
                                         <div className={`absolute top-0 left-0 w-1 h-full opacity-60 transition-all group-hover:opacity-100 ${note.type === "danger" ? "bg-red-500" :
-                                            note.type === "warning" ? "bg-amber-500" : "bg-cyan-500"
+                                            note.type === "warning" ? "bg-amber-500" :
+                                                note.type === "success" ? "bg-emerald-500" : "bg-cyan-500"
                                             }`} />
 
                                         <div className="flex items-start gap-6">
                                             <div className={`p-3 rounded-2xl flex-shrink-0 ${note.type === "danger" ? "bg-red-500/10 text-red-500" :
-                                                note.type === "warning" ? "bg-amber-500/10 text-amber-500" : "bg-cyan-500/10 text-cyan-500"
+                                                note.type === "warning" ? "bg-amber-500/10 text-amber-500" :
+                                                    note.type === "success" ? "bg-emerald-500/10 text-emerald-500" : "bg-cyan-500/10 text-cyan-500"
                                                 }`}>
                                                 {getIcon(note.type)}
                                             </div>

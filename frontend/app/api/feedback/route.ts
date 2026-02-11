@@ -3,6 +3,25 @@ import dbConnect from "@/lib/db";
 import Feedback from "@/models/Feedback";
 import nodemailer from "nodemailer";
 import { getFeedbackConfirmationEmail } from "@/lib/email-templates";
+import { cookies } from "next/headers";
+
+export async function GET() {
+    try {
+        const cookieStore = await cookies();
+        const token = cookieStore.get("admin_token");
+
+        if (!token) {
+            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+        }
+
+        await dbConnect();
+        const feedbacks = await Feedback.find({}).sort({ createdAt: -1 });
+
+        return NextResponse.json(feedbacks, { status: 200 });
+    } catch (error: any) {
+        return NextResponse.json({ message: "Server error", error: error.message }, { status: 500 });
+    }
+}
 
 export async function POST(req: NextRequest) {
     try {

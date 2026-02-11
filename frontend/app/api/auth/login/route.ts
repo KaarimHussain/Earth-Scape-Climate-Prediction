@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
+import { SignJWT } from "jose"; // Use jose for Edge compatibility if needed, but here nodejs is fine. sticking to jsonwebtoken for payload if preferred, but middleware needs jose. Let's send a standard JWT.
 import jwt from "jsonwebtoken";
 import { z } from "zod";
+import { cookies } from "next/headers";
 
 const loginSchema = z.object({
     identifier: z.string().min(1, "Username or Email is required"),
@@ -31,7 +33,6 @@ export async function POST(req: NextRequest) {
         await dbConnect();
 
         // Find user by email OR username
-        // Using $or allows users to login with either
         const user = await User.findOne({
             $or: [{ email: identifier }, { username: identifier }],
         });
@@ -44,7 +45,15 @@ export async function POST(req: NextRequest) {
         }
 
         // Check password
-        const isPasswordValid = await bcrypt.compare(password, user.password!);
+        // The password field in DB is optional (for OAuth), so check if it exists
+        if (!user.password) {
+            return NextResponse.json(
+                { message: "Invalid credentials. Please login with your provider." },
+                { status: 401 }
+            );
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
             return NextResponse.json(
@@ -57,10 +66,20 @@ export async function POST(req: NextRequest) {
         const token = jwt.sign(
             { userId: user._id, email: user.email, username: user.username },
             JWT_SECRET,
-            { expiresIn: "7d" } // 7 day expiration
+            { expiresIn: "7d" }
         );
 
-        // Return success with token
+        // Set Cookie using next/headers
+        const cookieStore = await cookies();
+        cookieStore.set("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 60 * 60 * 24 * 7, // 7 days
+            path: "/",
+            sameSite: "strict",
+        });
+
+        // Return success
         const userResponse = user.toObject();
         delete userResponse.password;
 

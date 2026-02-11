@@ -1,9 +1,9 @@
 export const getFeedbackConfirmationEmail = (name: string, message: string, rating: number) => {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const year = new Date().getFullYear();
-    const stars = "★".repeat(rating) + "☆".repeat(5 - rating);
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const year = new Date().getFullYear();
+  const stars = "★".repeat(rating) + "☆".repeat(5 - rating);
 
-    return `
+  return `
 <!DOCTYPE html>
 <html>
 <head>
@@ -68,6 +68,72 @@ export const getFeedbackConfirmationEmail = (name: string, message: string, rati
       </div>
     </div>
   </div>
+</body>
+    `;
+};
+
+export const getAdminAlertEmail = (message: string, priority: string) => {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const year = new Date().getFullYear();
+
+  let priorityColor = "#10b981"; // Low - Emerald
+  let priorityLabel = "Update";
+
+  if (priority === "high") {
+    priorityColor = "#ef4444"; // High - Red
+    priorityLabel = "Urgent Alert";
+  } else if (priority === "medium") {
+    priorityColor = "#f59e0b"; // Medium - Amber
+    priorityLabel = "Important Notice";
+  }
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${priorityLabel}: EarthScape System Message</title>
+  <style>
+    body { margin: 0; padding: 0; background-color: #000000; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #e5e5e5; }
+    .container { max-width: 600px; margin: 0 auto; background-color: #0a0a0a; border: 1px solid #222; border-radius: 16px; overflow: hidden; }
+    .header { padding: 40px 0; text-align: center; background-color: #0f0f0f; border-bottom: 2px solid ${priorityColor}; }
+    .logo { font-size: 24px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 2px; }
+    .badge { display: inline-block; padding: 6px 12px; border-radius: 4px; background-color: ${priorityColor}20; color: ${priorityColor}; border: 1px solid ${priorityColor}40; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-top: 15px; }
+    .content { padding: 40px 30px; }
+    .message-box { background-color: #111; border: 1px solid #262626; border-left: 4px solid ${priorityColor}; border-radius: 8px; padding: 25px; margin: 20px 0; line-height: 1.6; color: #d4d4d4; }
+    .footer { text-align: center; padding: 30px; background-color: #050505; color: #525252; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <br/>
+  <div class="container">
+    <div class="header">
+      <div class="logo">Earth<span>Scape</span></div>
+      <div class="badge">${priorityLabel}</div>
+    </div>
+    <div class="content">
+      <h2 style="color: #fff; margin-top: 0;">System Notification</h2>
+      <p style="color: #a3a3a3;">You have a new message from the platform administrators.</p>
+      
+      <div class="message-box">
+        "${message}"
+      </div>
+      
+      <p style="color: #a3a3a3; font-size: 14px;">
+        Please log in to your dashboard for more details if required.
+      </p>
+      
+      <div style="text-align: center; margin-top: 30px;">
+        <a href="${appUrl}" style="background-color: #fff; color: #000; padding: 12px 24px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 14px;">Open Dashboard</a>
+      </div>
+    </div>
+    <div class="footer">
+      &copy; ${year} EarthScape Climate Prediction.<br/>
+      This is an automated system alert. Please do not reply.
+    </div>
+  </div>
+  <br/>
 </body>
 </html>
     `;
